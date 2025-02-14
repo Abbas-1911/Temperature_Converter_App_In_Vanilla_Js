@@ -1,31 +1,36 @@
-function convertTemperature() {
-    let temperature = document.getElementById("temperature").value;
-    let fromUnit = document.getElementById("fromUnit").value;
-    let toUnit = document.getElementById("toUnit").value;
-    let resultText = document.getElementById("resultText");
+document.addEventListener("DOMContentLoaded", () => {
+    const tempInput = document.getElementById("tempInput");
+    const unitSelect = document.getElementById("unitSelect");
 
-    if (temperature === "" || isNaN(temperature)) {
-        resultText.textContent = "Invalid Input";
-        return;
-    }
+    const convertTemperature = () => {
+        let value = parseFloat(tempInput.value);
+        let fromUnit = unitSelect.value;
 
-    let temp = parseFloat(temperature);
-    let result = temp;
+        if (isNaN(value)) {
+            document.getElementById("celsiusResult").innerHTML = `Celsius: -- °C`;
+            document.getElementById("fahrenheitResult").innerHTML = `Fahrenheit: -- °F`;
+            document.getElementById("kelvinResult").innerHTML = `Kelvin: -- K`;
+            return;
+        }
 
-    // Convert to Celsius first
-    if (fromUnit === "F") {
-        result = (temp - 32) * 5 / 9;
-    } else if (fromUnit === "K") {
-        result = temp - 273.15;
-    }
+        const convert = (val, from, to) => {
+            if (from === to) return val;
 
-    // Convert from Celsius to target unit
-    if (toUnit === "F") {
-        result = (result * 9 / 5) + 32;
-    } else if (toUnit === "K") {
-        result = result + 273.15;
-    }
+            let celsius;
+            if (from === "C") celsius = val;
+            else if (from === "F") celsius = (val - 32) * (5 / 9);
+            else if (from === "K") celsius = val - 273.15;
 
-    // Display result with 2 decimal places
-    resultText.textContent = `Result: ${result.toFixed(2)} °${toUnit}`;
-}
+            if (to === "C") return celsius;
+            if (to === "F") return celsius * (9 / 5) + 32;
+            if (to === "K") return celsius + 273.15;
+        };
+
+        document.getElementById("celsiusResult").innerHTML = `Celsius: ${convert(value, fromUnit, "C").toFixed(2)} °C`;
+        document.getElementById("fahrenheitResult").innerHTML = `Fahrenheit: ${convert(value, fromUnit, "F").toFixed(2)} °F`;
+        document.getElementById("kelvinResult").innerHTML = `Kelvin: ${convert(value, fromUnit, "K").toFixed(2)} K`;
+    };
+
+    tempInput.addEventListener("input", convertTemperature);
+    unitSelect.addEventListener("change", convertTemperature);
+});
